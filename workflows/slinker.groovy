@@ -192,6 +192,7 @@ extract_reads = {
 	output.dir= temp_gene_info
 	def bed_file = output.dir+"/"+gene+".region.bed"
 
+    /// Extract reads from the gene region
 	transform(".bam") to (".gene.bam"){
 		exec """$samtools view -@ $threads -bq 1 -Sb -h -L $bed_file $input.bam > $output.gene.bam""", "samtools"
 	}
@@ -199,7 +200,6 @@ extract_reads = {
 }
 
 // ### Prepare files
-
 qsort_bam = {
 	transform('.gene.bam') to('.qsort.bam') {
 		output.dir=temp_gene_info
@@ -208,9 +208,7 @@ qsort_bam = {
 }
 
 // ### Genome guided assembly of transcripts
-
 assemble_transcripts = {
-
 	output.dir=temp_assembly
 	def output_file = temp_assembly + "/" + branch.name + ".assembly.gtf"
 
@@ -225,7 +223,6 @@ assemble_transcripts = {
 }
 
 assemble_transcripts_pure = {
-
 	output.dir=temp_assembly
 	def output_file = temp_assembly + "/" + branch.name + ".assembly.gtf"
 
@@ -240,7 +237,6 @@ assemble_transcripts_pure = {
 }
 
 merge_original = {
-
 	produce(resources_folder + '/assembly.combined.gtf'){
 			output.dir=resources_folder
 			def gtf = resources_folder+"/"+gene+".gtf"
@@ -253,41 +249,32 @@ merge_original = {
 // ### Create new superTranscript 
 
 flatten_gtf = {
-
 	from("assembly.combined.gtf") produce (resources_folder + "/flattened.gtf"){
 		output.dir=resources_folder
 		def out_file = resources_folder + "/flattened.gtf"
 		exec """python $FLATTEN -g $input -o $out_file"""
-
 	}
-
 }
 
 create_st = {
-
 	from("flattened.gtf")  produce(resources_folder + "/st.fasta"){
 		output.dir=resources_folder
 		def out_file = resources_folder + "/st.fasta"
 		exec """$gffread $input -g $GENOME -w $out_file -W""", "supertranscript"
 	}
-
 }
 
 // ### Align to new reference
-
 get_fastq = {
-
 	transform(".qsort.bam") to (".o.fastq", ".0.fastq", ".all.fastq"){
 		output.dir = temp_seq
 		exec """$samtools fastq -o $output1 -0 $output2 -s /dev/null -n $input.qsort.bam"""
 		exec """cat $output1 $output2 > $output3"""
 	}
-	
 }
 
 
 star_genome = {
-
 	output.dir = temp_folder+"/genome/"
 	from("st.fasta") produce("Genome"){
 		exec """$star --runMode genomeGenerate 
@@ -301,9 +288,7 @@ star_genome = {
 
 
 star_align = {
-
 	output.dir = resources_folder
-
 	from(".all.fastq") produce(branch.name+"_Aligned.sortedByCoord.out.bam"){
 
 		def sample_name = branch.name+"_"
@@ -329,21 +314,17 @@ star_align = {
 }
 
 star_index = {
-
 	output.dir = resources_folder
 	from(".bam") produce(branch.name+"_Aligned.sortedByCoord.out.bam.bai"){
 		def sample_name = branch.name
 		exec """$samtools index $input""", "samtools"
 	}
-
 }
 
 
 visualise = {
-
 	output.dir = plots_folder
 	exec """python $VIS $gene $case_sample $format $resources_folder $output.dir $width $min_junctions $log_cov"""
-
 }
 
 /*===========================================================

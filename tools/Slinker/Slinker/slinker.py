@@ -32,8 +32,8 @@ genome
 build path
 '''
 
-class Slinker():
 
+class Slinker():
 	def __init__(self, gene=False, case_id=False, resources="resources", padding=10, min_junctions=10):
 
 		self.gene = gene
@@ -57,7 +57,13 @@ class Slinker():
 
 
 	def _get_colors(self):
-
+		"""
+		NE: Novel Exon -> brown Orange
+		EE: Extended Exon -> Red
+		RI: Retained Intron -> Very yellow
+		TE: Truncated Exon -> Blue
+		SE: Skipped Exon -> purple
+		"""
 		color_event = {
 			"ne": 'rgba(244, 178, 102, 1)',
 			"ee": 'rgba(216, 17, 89, 1)',
@@ -190,3 +196,7 @@ class Slinker():
 		if save:
 			plot.canvas.write_html(save + ".html")
 			plot.canvas.write_image(save + ".png")
+
+
+if __name__ == "__main__":
+	s = Slinker(gene="SUPT7L", case_id="test", resources="", padding=100)
