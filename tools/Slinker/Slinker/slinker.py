@@ -45,14 +45,14 @@ class Slinker():
 		self.padding = padding
 
 		'''Samples'''
-		self.samples = cv.load_samples(resources)
+		self.samples = cv.load_samples(resources)	# Here samples are loaded into Canvas objects
 		self.case, self.controls = self._split_samples()
 
 		'''Assembly'''
 		self.color_event = self._get_colors()
 		self.assembly = build.Assembly(gene, resources, colors=self.color_event)
-		skipped_exons = self.assembly.skipped_exon(self.samples, self.assembly.st.st_region,
-												   self.case_id, min_support=min_junctions)
+		skipped_exons = self.assembly.skipped_exon(self.samples, self.assembly.st.st_region, self.case_id,
+												   min_support=min_junctions)
 		self.assembly.novel_regions["se"]["pos"] = skipped_exons
 
 
@@ -81,8 +81,9 @@ class Slinker():
 			error(100, "case id")
 
 	def _split_samples(self):
-
 		'''From a list of samples, segment the nominated case samples out from the lot.'''
+		# Self.samples is a list of Canvas objects!
+
 		print("here", self.case_id)
 		print("yup", [sample.name for sample in self.samples])
 		case_sample = [sample for sample in self.samples if sample.name == self.case_id][0]
@@ -153,7 +154,6 @@ class Slinker():
 		c = 6
 
 		for control in self.controls:
-
 			layout[c] = {'title': self.case_id,
 						 'type': 'coverage',
 						 'data': control,
@@ -190,6 +190,7 @@ class Slinker():
 		if "highlights" not in locals():
 			highlights = False
 
+		# Until now the data has been collected -> cv.Plot will unpack and plot it
 		''' The create the plot '''
 		plot = cv.Plot(layout, self.assembly.st.st_region, highlights=highlights, title=title,
 					   height=height, width=width, padding=self.padding)
@@ -201,9 +202,10 @@ class Slinker():
 
 if __name__ == "__main__":
 # min_junctions: Only junctions with more than min_junctions-supporting split-reads will be displayed
-	s = Slinker(gene="SUPT7L", case_id="19-5325_1", 
-resources="/raid/bioinformatics/olik_slinker_file/output/SUPT7L/resources/", padding=100, min_junctions=1)
+	s = Slinker(gene="SUPT7L", case_id="19-5325_1",
+				resources="/raid/bioinformatics/olik_slinker_file/output/SUPT7L/resources/", padding=100, min_junctions=1)
 	s.plot(width=1000, title="<b>Slinker</b> - Testing", min_junctions=1)
+
 
 
 

@@ -52,7 +52,7 @@ class Junctions():
 			""" Taken from Alex Dobin's excellent STAR aligner SJ script - reimplemented in Python."""
 			for read in sam.fetch(str(chrom[i]), start=region["start"], end=region["end"]):
 				cigar = read.cigartuples
-				t = 1
+				t = 1		# TODO it's never used, or is it?
 				g = read.reference_start + 1 + offset # as 0 based - SAM format is 1 based.
 
 				for operation in cigar:
@@ -60,7 +60,7 @@ class Junctions():
 					op_length = operation[1]
 					if (op_type == 4) or (op_type == 1):
 						t += op_length
-					elif op_type == 4:
+					elif op_type == 4:		# TODO already covered by the above?
 						g += op_length
 					elif op_type == 3:
 						sj1 = read.reference_name + ":" + str(g) + "-" + str(g + op_length - 1)
@@ -99,7 +99,7 @@ class Junctions():
 	def print(self, canvas, region, min_support=0, line="rgba(87, 22, 162, 0.5)",
                     bgcolor=False, row=1, col=1):
 
-		splice_junctions = self.get(region, min_support)
+		splice_junctions = self.get(region, min_support)	# Extract junctions
 		distances = [-15, 10, -30, 25]
 		distance = 0
 
@@ -133,7 +133,6 @@ class Junctions():
 									   arrowhead=7, ax=0, borderwidth=0, bgcolor="#000000", borderpad=0,
 									font=dict(size=8, color="#ffffff")),
 								  row=row, col=col)
-
 
 		if bgcolor:
 			canvas.add_shape(dict(type="rect", layer="below", x0=0, y0=-10, x1=1, y1=0, fillcolor=bgcolor),

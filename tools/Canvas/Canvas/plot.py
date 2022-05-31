@@ -31,7 +31,7 @@ class Plot():
 				 coord_map=False):
 
 		# User supplied order of tracks and subsequent details
-		self.layout = layout
+		self.layout = layout			# tracks
 		self.highlights = highlights
 		self._track_info()
 
@@ -53,7 +53,6 @@ class Plot():
 
 
 	def _create(self):
-
 		self.blank()
 		self.paint()
 
@@ -88,7 +87,6 @@ class Plot():
 
 
 	def paint(self):
-
 		'''Iterate through every track in the layout and plot it according to the type.'''
 
 		for track_no, track in self.layout.items():
@@ -119,6 +117,7 @@ class Plot():
 				track_annotation.print(self.canvas, self.region,
 									   row=track_no, bgcolor=track["bgcolor"], title=track["title"])
 
+			# Junction track!
 			elif track["type"] == "junctions":
 				track_junctions = cv.Junctions(sample=track["data"])
 				track_junctions.print(self.canvas, self.region, min_support=track['support'],

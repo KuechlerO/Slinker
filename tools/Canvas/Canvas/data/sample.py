@@ -37,6 +37,7 @@ class Sample():
 	"""
 
 	def __init__(self, bam_path):
+		# TODO: Remove name strictness
 		self.name = bam_path.split("/")[-1].split("_Aligned.sortedByCoord.out.bam")[0]
 		self.path = "/".join(bam_path.split("/")[:-1])
 		self.bam_path = bam_path
@@ -67,7 +68,7 @@ Functions
 ---------------------------------------------------------------------------------------------------------------------'''
 
 def load_samples(bam):
-
+	""" Creates array of Sample objects from a list of bam files. """
 	bam_paths = bam if isinstance(bam, list) else glob(bam + "/*.bam")
 	samples = [Sample(bam_path) for bam_path in bam_paths]
 
