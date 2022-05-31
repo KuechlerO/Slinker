@@ -6,6 +6,7 @@ channels:
   - defaults
 dependencies:
   - pandas
+  - openjdk
   - plotly==4.14.3
   - pybedtools==0.8.1
   - pysam==0.15.4
