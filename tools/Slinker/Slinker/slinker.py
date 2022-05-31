@@ -83,7 +83,8 @@ class Slinker():
 	def _split_samples(self):
 
 		'''From a list of samples, segment the nominated case samples out from the lot.'''
-
+		print("here", self.case_id)
+		print("yup", [sample.name for sample in self.samples])
 		case_sample = [sample for sample in self.samples if sample.name == self.case_id][0]
 		control_samples = [sample for sample in self.samples if sample.name != self.case_id]
 
@@ -199,4 +200,13 @@ class Slinker():
 
 
 if __name__ == "__main__":
-	s = Slinker(gene="SUPT7L", case_id="test", resources="", padding=100)
+# min_junctions: Only junctions with more than min_junctions-supporting split-reads will be displayed
+	s = Slinker(gene="SUPT7L", case_id="19-5325_1", 
+resources="/raid/bioinformatics/olik_slinker_file/output/SUPT7L/resources/", padding=100, min_junctions=1)
+	s.plot(width=1000, title="<b>Slinker</b> - Testing", min_junctions=1)
+
+
+
+
+
+
